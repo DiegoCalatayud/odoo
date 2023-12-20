@@ -1,0 +1,95 @@
+<odoo>
+  <data>
+     <record model="ir.ui.view" id="exito.parcel_view">
+          <field name="name">Parcels</field>
+          <field name="model">exito.parcel</field>
+          <field name="arch" type="xml">
+            <tree decoration-danger="business" decoration-success="not business">
+              <field name="name"/>
+              <field name="city"/>
+              <field name="monthly_price"/>
+              <field name="business" invisible="1"/>
+            </tree>
+          </field>
+    </record>
+
+    <record model="ir.ui.view" id="exito.parcel_search">
+          <field name="name">Parcels search</field>
+          <field name="model">exito.parcel</field>
+          <field name="arch" type="xml">
+            <search >
+              <field name="name"/>
+              <field name="city"/>
+              <field name="monthly_price"/>
+              <filter string="Ocupada" name="has_business" domain="[('business', '!=', False)]"/>
+              <filter string="Libre" name="has_business" domain="[('business', '=', False)]"/>
+      <filter string="Agrupados por Ciudad" name="group_by_city" domain="[]" context="{'group_by':'city'}"/>            </search>
+          </field>
+    </record>
+
+     <record model="ir.ui.view" id="exito.parcel_form_view">
+          <field name="name">Personaje</field>
+          <field name="model">exito.parcel</field>
+          <field name="arch" type="xml">
+            <form >
+                <sheet>
+                    <group>
+                        <group>
+                            <separator string="Datos de la parcela"></separator>
+                              <field name="name"/>
+                              <field name="city"/>
+                              <field name="monthly_price"/>
+                        </group>
+                        <group>
+                            <separator string="Negocios de la parcela"></separator>
+                            <field name="business"/>
+                            <separator string="Propietario"></separator>
+                            <field name="owner"/>
+                        </group>
+                    </group>
+
+                </sheet>
+            </form>
+          </field>
+    </record>
+
+
+
+
+    <record model="ir.ui.view" id="exito.parcel_kanban_view">
+      <field name="name">Parcels kanban</field>
+      <field name="model">exito.parcel</field>
+      <field name="arch" type="xml">
+        <kanban default_group_by="city">
+              <field name="name"/>
+              <field name="city"/>
+              <field name="monthly_price"/>
+              <field name="monthly_price"/>
+            <templates>
+            <t t-name="kanban-box">
+              <div  t-attf-class=" oe_kanban_card o_kanban_record_has_image_fill ">
+<!--                      <div class="o_kanban_image_fill_left o_kanban_image_full d-none d-md-block "-->
+<!--                                     t-attf-style="background-image:url('#{kanban_image('roma.citicen', 'avatar', record.id.value, placeholder)}')">-->
+<!--                      </div>-->
+                <div class="oe_kanban_details d-flex flex-column">
+                    <h3>
+                        <field name="city"/>
+                    </h3>
+                  <ul>
+                    <li>Nombre de parcela: <field name="name"/></li>
+                    <li>Precio mensual: <field name="monthly_price"/></li>
+                    <li>
+                      <field name="occupation_status"/>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </t>
+          </templates>
+
+        </kanban>
+      </field>
+    </record>
+
+  </data>
+</odoo>

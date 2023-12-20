@@ -1,0 +1,62 @@
+<odoo>
+  <data>
+     <record model="ir.ui.view" id="exito.character_view">
+          <field name="name">Personajes</field>
+          <field name="model">exito.character</field>
+          <field name="arch" type="xml">
+            <tree >
+              <field name="name"/>
+              <field name="age"/>
+              <field name="money"/>
+            </tree>
+          </field>
+    </record>
+     <record model="ir.ui.view" id="exito.character_form_view">
+          <field name="name">Personaje</field>
+          <field name="model">exito.character</field>
+          <field name="arch" type="xml">
+            <form >
+                <sheet>
+                    <group>
+                        <group>
+                            <separator string="Datos del personaje"></separator>
+                            <field name="name"/>
+                            <field name="age"/>
+                            <field name="sex"/>
+                            <field name="money"/>
+                            <field name="dairy_spend"/>
+                            <field name="player"/>
+                        </group>
+                        <group>
+                            <separator string="Ubicación del personaje"></separator>
+                            <field name="city"/>
+                            <field name="country"/>
+                            <separator string="Estado del personaje"></separator>
+                            <field name="alive"/>
+                            <field name="main_character"/>
+                            <field name="prisoner"/>
+                        </group>
+
+                        <notebook>
+                            <page string="Características">
+                                <field name="characteristics" widget="one2many_list"/>
+                            </page>
+                            <page string="Prestamos">
+                                <field name="loans" widget="one2many_list"/>
+                            </page>
+                            <page string="Negocios">
+                                <field name="business" widget="one2many_list"/>
+                            </page>
+                            <page string="Parcelas">
+                                <field name="parcels" widget="one2many_list"/>
+                            </page>
+                        </notebook>
+                    </group>
+
+                </sheet>
+            </form>
+          </field>
+    </record>
+
+  </data>
+</odoo>

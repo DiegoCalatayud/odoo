@@ -1,0 +1,50 @@
+<odoo>
+  <data>
+     <record model="ir.ui.view" id="exito.character_business_view">
+          <field name="name">Negocios del personaje</field>
+          <field name="model">exito.character_business</field>
+          <field name="arch" type="xml">
+            <tree >
+              <field name="owner"/>
+              <field name="monthly_return"/>
+              <field name="level"/>
+            </tree>
+          </field>
+    </record>
+
+
+    <record model="ir.ui.view" id="exito.character_business_kanban_view">
+      <field name="name">Empresas de personajes kanban</field>
+      <field name="model">exito.character_business</field>
+      <field name="arch" type="xml">
+        <kanban default_group_by="owner">
+            <field name="name"/>
+            <field name="owner"/>
+            <field name="monthly_return"/>
+            <field name="level"/>
+            <templates>
+            <t t-name="kanban-box">
+              <div  t-attf-class=" oe_kanban_card o_kanban_record_has_image_fill ">
+<!--                      <div class="o_kanban_image_fill_left o_kanban_image_full d-none d-md-block "-->
+<!--                                     t-attf-style="background-image:url('#{kanban_image('roma.citicen', 'avatar', record.id.value, placeholder)}')">-->
+<!--                      </div>-->
+                <div class="oe_kanban_details d-flex flex-column">
+
+
+                  <ul>
+                    <li>Negocio: <field name="name"></field></li>
+                    <li>Nivel: <field name="level"></field></li>
+                    <li>Retorno: <field name="monthly_return"></field></li>
+
+                  </ul>
+                </div>
+              </div>
+            </t>
+          </templates>
+
+        </kanban>
+      </field>
+    </record>
+
+  </data>
+</odoo>

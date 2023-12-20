@@ -1,0 +1,45 @@
+<odoo>
+  <data>
+     <record model="ir.ui.view" id="exito.player_view">
+          <field name="name">Jugador</field>
+          <field name="model">exito.player</field>
+          <field name="arch" type="xml">
+            <tree >
+              <field name="name"/>
+              <field name="age"/>
+              <field name="sex"/>
+            </tree>
+          </field>
+    </record>
+     <record model="ir.ui.view" id="exito.player_form_view">
+          <field name="name">Jugador</field>
+          <field name="model">exito.player</field>
+          <field name="arch" type="xml">
+            <form >
+                <header>
+                    <h1>Formulario de Jugadores</h1>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <separator string="Datos del jugador"></separator>
+                            <field name="name"/>
+                            <field name="age"/>
+                            <field name="sex"/>
+                            <field name="photo" widget="image" nolabel="1"/>
+                            <button name="crear_personaje_aleatorio" type="object" string="Crear personaje aleatorio"/>
+                        </group>
+                        <group>
+                            <separator string="Datos de sus personajes"></separator>
+                            <field name="default_character_name"/>
+                            <field name="characters"/>
+                        </group>
+                    </group>
+
+                </sheet>
+            </form>
+          </field>
+    </record>
+
+  </data>
+</odoo>

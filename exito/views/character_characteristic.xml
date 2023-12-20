@@ -1,0 +1,60 @@
+<odoo>
+  <data>
+     <record model="ir.ui.view" id="exito.character_characteristic_view">
+          <field name="name">Caracteristicas del personaje</field>
+          <field name="model">exito.character_characteristic</field>
+          <field name="arch" type="xml">
+            <tree >
+              <field name="characteristic_name"/>
+              <field name="character_id"/>
+<!--              <field name="characteristic_level"/>-->
+              <field name="characteristic_level" widget="progressbar" options="{'min_value': 0, 'max_value': 100}"/>
+            </tree>
+          </field>
+    </record>
+
+    <record model="ir.ui.view" id="exito.character_characteristic_kanban_view">
+      <field name="name">Caracteristicas del personaje kanban</field>
+      <field name="model">exito.character_characteristic</field>
+      <field name="arch" type="xml">
+        <kanban default_group_by="character_id">
+            <field name="characteristic_name"/>
+            <field name="character_id"/>
+            <field name="characteristic_level"/>
+            <templates>
+            <t t-name="kanban-box">
+              <div  t-attf-class=" oe_kanban_card o_kanban_record_has_image_fill ">
+<!--                      <div class="o_kanban_image_fill_left o_kanban_image_full d-none d-md-block "-->
+<!--                                     t-attf-style="background-image:url('#{kanban_image('roma.citicen', 'avatar', record.id.value, placeholder)}')">-->
+<!--                      </div>-->
+                <div class="oe_kanban_details d-flex flex-column">
+
+
+                  <ul>
+                    <li>Característica: <field name="characteristic_name"></field></li>
+                    <li>Nivel: <field name="characteristic_level"></field></li>
+                  </ul>
+                </div>
+              </div>
+            </t>
+          </templates>
+
+        </kanban>
+      </field>
+    </record>
+
+<record model="ir.ui.view" id="view_characteristic_graph">
+    <field name="name">Gráfico de Características</field>
+    <field name="model">exito.character_characteristic</field>
+    <field name="arch" type="xml">
+        <graph string="Gráfico de Características">
+            <field name="characteristic_name" type="row" string="Característica"/>
+            <field name="characteristic_level" type="float" string="Nivel"/>
+        </graph>
+    </field>
+</record>
+
+
+
+  </data>
+</odoo>

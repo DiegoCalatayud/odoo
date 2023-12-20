@@ -1,0 +1,15 @@
+<odoo>
+  <data>
+     <record model="ir.ui.view" id="exito.auction_character_bid_view">
+          <field name="name">Apuestas</field>
+          <field name="model">exito.auction_character_bid</field>
+          <field name="arch" type="xml">
+            <tree >
+              <field name="auction_id"/>
+              <field name="character_id"/>
+              <field name="amount"/>
+            </tree>
+          </field>
+    </record>
+  </data>
+</odoo>

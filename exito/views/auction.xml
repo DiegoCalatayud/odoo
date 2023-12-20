@@ -1,0 +1,26 @@
+<odoo>
+  <data>
+     <record model="ir.ui.view" id="exito.auction_view">
+          <field name="name">Subastas</field>
+          <field name="model">exito.auction</field>
+          <field name="arch" type="xml">
+            <tree >
+              <field name="name"/>
+              <field name="parcel_name"/>
+              <field name="startDate"/>
+              <field name="durationHours"/>
+            </tree>
+          </field>
+    </record>
+     <record model="ir.ui.view" id="exito.auction_calendar">
+          <field name="name">Calendario de subastas</field>
+          <field name="model">exito.auction</field>
+          <field name="arch" type="xml">
+            <calendar string="Calendario de subastas" date_start="startDate" date_delay="durationHours"  color="parcel_name">
+              <field name="parcel_name"/>
+            </calendar>
+          </field>
+    </record>
+  </data>
+</odoo>
+
