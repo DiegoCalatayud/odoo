@@ -4,7 +4,6 @@ access_exito_local,exito.local,model_exito_local,base.group_user,1,1,1,1
 access_exito_country,exito.country,model_exito_country,base.group_user,1,1,1,1
 access_exito_city,exito.city,model_exito_city,base.group_user,1,1,1,1
 access_exito_parcel,exito.parcel,model_exito_parcel,base.group_user,1,1,1,1
-access_exito_player,exito.player,model_exito_player,base.group_user,1,1,1,1
 access_exito_character,exito.character,model_exito_character,base.group_user,1,1,1,1
 access_exito_business,exito.business,model_exito_business,base.group_user,1,1,1,1
 access_exito_bank,exito.bank,model_exito_bank,base.group_user,1,1,1,1
@@ -16,4 +15,5 @@ access_exito_character_characteristic,exito.character_characteristic,model_exito
 access_exito_character_business,exito.character_business,model_exito_character_business,base.group_user,1,1,1,1
 access_exito_auction,exito.auction,model_exito_auction,base.group_user,1,1,1,1
 access_exito_auction_character_bid,exito.auction_character_bid,model_exito_auction_character_bid,base.group_user,1,1,1,1
-
+access_exito_player_wizard,exito.player_wizard,model_exito_player_wizard,base.group_user,1,1,1,1
+access_exito_character_wizard,exito.character_wizard,model_exito_character_wizard,base.group_user,1,1,1,1

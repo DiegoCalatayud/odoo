@@ -51,6 +51,9 @@
                                 <field name="parcels" widget="one2many_list"/>
                             </page>
                         </notebook>
+                        <group>
+                            <button name="participar_en_subasta" type="object" string="Participar en subasta"/>
+                        </group>
                     </group>
 
                 </sheet>

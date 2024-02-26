@@ -94,7 +94,9 @@ class parcel(models.Model):
 
 
 class player(models.Model):
-    _name = 'exito.player'
+    #_name = 'exito.player'
+    _name = 'res.partner'
+    _inherit = 'res.partner'
     _description = 'Character field'
 
     name = fields.Char(string='Name')
@@ -103,6 +105,7 @@ class player(models.Model):
     default_character_name = fields.Char(string="Nombre para su personaje")
     sex = fields.Selection([('masculino', 'Masculino'), ('femenino', 'Femenino')], string='Sexo')
     photo = fields.Image(max_width=200, max_height=200)
+    is_player = fields.Boolean(default=False)
 
     @api.model
     def create(self, vals):
@@ -126,15 +129,120 @@ class player(models.Model):
 
         character_vals = {
             'name': random_name,
-            'player': self.id,  # Asigna el jugador actual como propietario del personaje
-            'main_character': False,  # Supongo que quieres que sea el personaje principal
-            'sex': random_sex,  # Asigna el sexo aleatorio
+            'player': self.id,
+            'main_character': False,
+            'sex': random_sex,
         }
 
-        self.env['exito.character'].create(character_vals)
+        # self.env['exito.character'].create(character_vals)
+        created_character = self.env['exito.character'].create(character_vals)
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Personaje Creado',
+            'view_mode': 'form',
+            'res_model': 'exito.character',
+            'res_id': created_character.id,
+            'target': 'current',
+        }
+
+    def crear_personaje(self):
+
+        return {
+            'type': 'ir.actions.act_window',
+            'name': ' ',
+            'view_mode': 'form',
+            'res_model': 'exito.player_wizard',
+            'target': 'new',
+            'context': {'default_player_id': self.id},
+        }
 
 
 
+class player_wizard(models.TransientModel):
+    _name = 'exito.player_wizard'
+    _description = 'Asistente de Creación de Personaje'
+
+    player_id = fields.Many2one('res.partner', string='Jugador')
+
+    name = fields.Char(string='Nombre', required=True)
+    age = fields.Integer(default=18, string='Edad', required=True)
+    sex = fields.Selection([('masculino', 'Masculino'), ('femenino', 'Femenino')], string='Sexo', required=True)
+
+    money = fields.Float(default=750.00, string='Dinero')
+    main_character = fields.Boolean(default=False, string='Personaje principal?')
+
+
+    state = fields.Selection([
+        ('step1', 'Paso 1'),
+        ('step2', 'Paso 2'),
+        ('step3', 'Paso 3'),
+    ], default='step1')
+
+
+    # def action_next(self):
+    #     self.ensure_one()
+    #     if self.state == 'step1':
+    #         return self.write({'state': 'step2'})
+    #     elif self.state == 'step2':
+    #         return self.write({'state': 'step3'})
+    def action_next(self):
+        self.ensure_one()
+        new_state = 'step1'
+        if self.state == 'step1':
+            self.env.ref('exito.action_check_age').with_context(active_id=self.id, active_model=self._name).sudo().run()
+            new_state = 'step2'
+        elif self.state == 'step2':
+            new_state = 'step3'
+        self.write({'state': new_state})
+
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': self._name,
+            'res_id': self.id,
+            'view_mode': 'form',
+            'target': 'new',
+            'name': ' ',
+            'flags': {'form': {'action_buttons': True, 'options': {'mode': 'edit'}}},
+        }
+
+
+    def action_prev(self):
+        self.ensure_one()
+        new_state = 'step1'
+        if self.state == 'step3':
+            new_state = 'step2'
+        elif self.state == 'step2':
+            new_state = 'step1'
+        self.write({'state': new_state})
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': self._name,
+            'res_id': self.id,
+            'view_mode': 'form',
+            'target': 'new',
+            'name': ' ',
+            'flags': {'form': {'action_buttons': True, 'options': {'mode': 'edit'}}},
+        }
+
+    def action_save(self):
+        self.ensure_one()
+        created_character = self.env['exito.character'].create({
+            'name': self.name,
+            'age': self.age,
+            'sex': self.sex,
+            'money': self.money,
+            'main_character': self.main_character,
+            'player': self.player_id.id,
+        })
+        # return {'type': 'ir.actions.act_window_close'}
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Personaje Creado',
+            'view_mode': 'form',
+            'res_model': 'exito.character',
+            'res_id': created_character.id,  # ID del personaje creado
+            'target': 'current',
+        }
 
 
 
@@ -148,7 +256,7 @@ class character(models.Model):
     alive = fields.Boolean(default=True, string='Está vivo?')
     main_character = fields.Boolean( string='Personaje principal?')
     loans = fields.One2many("exito.loan", 'client', string='Prestamos')
-    player = fields.Many2one("exito.player", string='Jugador', ondelete='restrict')
+    player = fields.Many2one("res.partner", string='Jugador', ondelete='restrict')
     sex = fields.Selection([('masculino', 'Masculino'), ('femenino', 'Femenino')], string='Sexo')
     business = fields.One2many('exito.character_business', 'owner', string='Negocios')
     prisoner = fields.Boolean(default=False, string='Preso?')
@@ -177,6 +285,106 @@ class character(models.Model):
             })
 
         return new_character
+    def participar_en_subasta(self):
+
+        return {
+            'type': 'ir.actions.act_window',
+            'name': ' ',
+            'view_mode': 'form',
+            'res_model': 'exito.character_wizard',
+            'target': 'new',
+            'context': {'default_character_id': self.id},
+        }
+
+class character_wizard(models.TransientModel):
+    _name = 'exito.character_wizard'
+    _description = 'Asistente de Creación de subasta'
+
+
+    character_id = fields.Many2one('exito.character', string='Personaje', default=lambda self: self.env.context.get('default_character_id'))
+    auction_id = fields.Many2one('exito.auction', string='Subasta', required=True)
+    bid_amount = fields.Float(string='Cantidad Apostada', required=True)
+    state = fields.Selection([
+        ('step1', 'Paso 1'),
+        ('step2', 'Paso 2'),
+        ('step3', 'Paso 3'),
+    ], default='step1')
+
+
+    def action_next(self):
+        self.ensure_one()
+        new_state = 'step1'
+        if self.state == 'step1':
+            new_state = 'step2'
+        elif self.state == 'step2':
+            new_state = 'step3'
+        self.write({'state': new_state})
+
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': self._name,
+            'res_id': self.id,
+            'view_mode': 'form',
+            'target': 'new',
+            'name': ' ',
+            'flags': {'form': {'action_buttons': True, 'options': {'mode': 'edit'}}},
+        }
+
+
+    def action_prev(self):
+        self.ensure_one()
+        new_state = 'step1'
+        if self.state == 'step3':
+            new_state = 'step2'
+        elif self.state == 'step2':
+            new_state = 'step1'
+        self.write({'state': new_state})
+        return {
+            'type': 'ir.actions.act_window',
+            'res_model': self._name,
+            'res_id': self.id,
+            'view_mode': 'form',
+            'target': 'new',
+            'name': ' ',
+            'flags': {'form': {'action_buttons': True, 'options': {'mode': 'edit'}}},
+        }
+
+    def action_save(self):
+        self.ensure_one()
+        if self.character_id.money < self.bid_amount:
+            return {
+                'warning': {
+                    'title': "No suficiente dinero",
+                    'message': "El personaje no tiene suficiente dinero para realizar esta apuesta."
+                }
+            }
+        self.env['exito.auction_character_bid'].create({
+            'auction_id': self.auction_id.id,
+            'character_id': self.character_id.id,
+            'amount': self.bid_amount,
+        })
+        self.character_id.money -= self.bid_amount
+        return {
+            'type': 'ir.actions.act_window_close',
+            'info': 'La apuesta ha sido realizada con éxito.'
+        }
+        # created_character = self.env['exito.character'].create({
+        #     'name': self.name,
+        #     'age': self.age,
+        #     'sex': self.sex,
+        #     'money': self.money,
+        #     'main_character': self.main_character,
+        #     'player': self.player_id.id,
+        # })
+        # # return {'type': 'ir.actions.act_window_close'}
+        # return {
+        #     'type': 'ir.actions.act_window',
+        #     'name': 'Personaje Creado',
+        #     'view_mode': 'form',
+        #     'res_model': 'exito.character',
+        #     'res_id': created_character.id,
+        #     'target': 'current',
+        # }
 
 
 class character_characteristic(models.Model):
@@ -324,10 +532,12 @@ class auction(models.Model):
     name = fields.Char(string="Nombre subasta", compute="_compute_name", store=True, help='Nombre por el cual es identificada dicha subasta',readonly=True)
     #name = fields.Char(default="Subasta desconocida", string="nombre subasta",help='Nombre por el cual es identificada dicha subasta')
     startDate = fields.Datetime(default=lambda self: datetime.now(), string="Hora de inicio")
+    finishDate = fields.Datetime()
     durationHours = fields.Integer(default=2, help='La cantidad de horas que va a permanecer activa esta subasta', string="Duración subasta")
     parcel_id = fields.Many2one('exito.parcel', string='Parcela')
     character_bids = fields.One2many('exito.auction_character_bid', 'auction_id', string='Apuestas de personajes')
     parcel_name = fields.Char(related='parcel_id.name', string='Nombre de Parcela', store=True, readonly=True)
+    sorted_character_bids = fields.One2many('exito.auction_character_bid', compute='_compute_sorted_character_bids')
     status = fields.Selection([
         ('iniciado', 'Iniciado'),
         ('terminado', 'Terminado'),
@@ -358,6 +568,29 @@ class auction(models.Model):
                 character = self.env['exito.character'].browse(character_id)
                 # character.write({'city': auction.parcel_id.city.id})
                 character.parcels += auction.parcel_id
+
+    def get_unprocessed_finished_auctions(self):
+        finished_auctions = self.filtered(lambda a: a.status == 'terminado')
+        return finished_auctions
+
+    @api.depends('character_bids.amount')
+    def _compute_sorted_character_bids(self):
+        for auction in self:
+            sorted_bids = auction.character_bids.sorted(key=lambda bid: bid.amount, reverse=True)
+            auction.sorted_character_bids = [(6, 0, sorted_bids.ids)]
+
+
+    def action_view_sorted_bids(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Apuestas Ordenadas',
+            'res_model': 'exito.auction_character_bid',
+            'view_mode': 'tree',
+            'domain': [('auction_id', '=', self.id)],
+            'context': {'default_auction_id': self.id},
+            'target': 'new',
+        }
 
 class auction_character_bid(models.Model):
     _name = 'exito.auction_character_bid'

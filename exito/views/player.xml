@@ -2,7 +2,7 @@
   <data>
      <record model="ir.ui.view" id="exito.player_view">
           <field name="name">Jugador</field>
-          <field name="model">exito.player</field>
+          <field name="model">res.partner</field>
           <field name="arch" type="xml">
             <tree >
               <field name="name"/>
@@ -13,7 +13,7 @@
     </record>
      <record model="ir.ui.view" id="exito.player_form_view">
           <field name="name">Jugador</field>
-          <field name="model">exito.player</field>
+          <field name="model">res.partner</field>
           <field name="arch" type="xml">
             <form >
                 <header>
@@ -28,6 +28,7 @@
                             <field name="sex"/>
                             <field name="photo" widget="image" nolabel="1"/>
                             <button name="crear_personaje_aleatorio" type="object" string="Crear personaje aleatorio"/>
+                            <button name="crear_personaje" type="object" string="Crear personaje"/>
                         </group>
                         <group>
                             <separator string="Datos de sus personajes"></separator>
@@ -40,6 +41,64 @@
             </form>
           </field>
     </record>
+
+
+
+<!--      WIZARD-->
+
+
+
+    <record model="ir.ui.view" id="exito.player_wizard_form_view">
+          <field name="name">Jugador wizard form</field>
+          <field name="model">exito.player_wizard</field>
+          <field name="arch" type="xml">
+          <form>
+                <header>
+                    <h1>Crear un Nuevo Personaje</h1>
+                    <field name="state" widget="statusbar"/>
+                </header>
+
+
+                <group states="step3">
+                    <h2>Revisar personaje</h2>
+                </group>
+                <group string="Define el personaje"  states="step1,step3">
+                    <field name="name" attrs="{'readonly':[('state','!=','step1')]}"/>
+                    <field name="age" attrs="{'readonly':[('state','!=','step1')]}"/>
+                    <field name="sex" attrs="{'readonly':[('state','!=','step1')]}"/>
+                </group>
+                <group string="Configura el personaje"  states="step2,step3">
+                    <field name="money" attrs="{'readonly':[('state','!=','step2')]}"/>
+                    <field name="main_character" attrs="{'readonly':[('state','!=','step2')]}"/>
+                </group>
+                <footer>
+                    <button string="Anterior" type="object" name="action_prev" attrs="{'invisible': [('state', '=', 'step1')]}"/>
+                    <button string="Siguiente" type="object" name="action_next" class="btn-primary" attrs="{'invisible': [('state', '=', 'step3')]}"/>
+                    <button string="Guardar" type="object" name="action_save" class="btn-primary" attrs="{'invisible': [('state', '!=', 'step3')]}"/>
+                </footer>
+          </form>
+          </field>
+    </record>
+
+    <record id="action_check_age" model="ir.actions.server">
+        <field name="name">Comprobar Edad</field>
+        <field name="model_id" ref="model_exito_player_wizard"/>
+        <field name="state">code</field>
+        <field name="code">
+            if record.age &lt; 18:
+                record.write({'age': 18})
+        </field>
+    </record>
+
+    <record id="exito.action_player_wizard" model="ir.actions.act_window">
+        <field name="name">Lanzar asistente de jugador</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">exito.player_wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="exito.player_wizard_form_view"/>
+        <field name="target">new</field>
+    </record>
+
 
   </data>
 </odoo>

@@ -48,8 +48,13 @@
 
     <record model="ir.actions.act_window" id="exito.action_player">
       <field name="name">Player Window</field>
-      <field name="res_model">exito.player</field>
+      <field name="res_model">res.partner</field>
       <field name="view_mode">tree,form</field>
+      <field name="domain"> [('is_player','=',True)]</field>
+      <field name="context">{'default_is_player': True}</field>
+      <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('exito.player_view')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('exito.player_form_view')}),]" />
     </record>
 
     <record model="ir.actions.act_window" id="exito.action_character">
